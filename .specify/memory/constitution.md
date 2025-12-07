@@ -1,55 +1,42 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: 0.1.0 → 1.0.0
+- Modified principles: None (new project constitution)
+- Added sections: All principles and governance sections
+- Removed sections: None
+- Templates requiring updates: ✅ .specify/templates/plan-template.md, ✅ .specify/templates/spec-template.md, ✅ .specify/templates/tasks-template.md, ⚠ .specify/templates/commands/*.md
+- Follow-up TODOs: None
+-->
+
+# Physical AI & Humanoid Robotics Book with Integrated RAG Chatbot Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Accuracy
+Validate all technical content via simulations, ROS2, NVIDIA Isaac, and authoritative sources
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Clarity
+Content must be suitable for advanced AI & robotics students
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Reproducibility
+All code, simulations, and demos must run as documented
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Integration
+Book content and RAG chatbot aligned; chatbot answers based on selected text
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Practicality
+Focus on hands-on humanoid robot applications bridging digital AI and physical embodiment
 
-### [PRINCIPLE_6_NAME]
+### Quality Assurance
+All content and code continuously synced with GitHub repo
 
+## Key Standards
+Include diagrams, step-by-step explanations, and code examples; Minimum 50% peer-reviewed or official sources (ROS2, NVIDIA Isaac, Unity); Chatbot answers traceable to book content; Writing style: Flesch-Kincaid 12–14; Plagiarism: 0% tolerance
 
-[PRINCIPLE__DESCRIPTION]
-
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
-
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Constraints
+Docusaurus book deployed to GitHub Pages with embedded RAG chatbot; Modules: ROS2 (Robotic Nervous System), Gazebo & Unity (Digital Twin), NVIDIA Isaac (AI-Robot Brain), Vision-Language-Action (VLA); Capstone: autonomous humanoid robot performing voice-to-action tasks, obstacle navigation, and object manipulation; Word count: 50,000–70,000 words; Include all code, simulations, and notebooks in GitHub repo with instructions
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+GitHub Integration: Repository: https://github.com/Areejshaikh/Physical_AI_-_Humanoid_Robotics.git; All code, notebooks, diagrams, and book content must be automatically pushed/updated to this repository; Maintain proper folder structure: /book-content, /simulations, /notebooks, /RAG-chatbot; Commits must be descriptive, organized, and maintain reproducibility
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-01-01 | **Last Amended**: 2025-12-07

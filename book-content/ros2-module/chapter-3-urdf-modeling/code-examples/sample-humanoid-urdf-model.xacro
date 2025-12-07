@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="simple_humanoid_xacro">
+
+  <!-- Define robot constants -->
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+  
+  <!-- Material definitions -->
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+  <material name="skin">
+    <color rgba="0.8 0.6 0.4 1"/>
+  </material>
+  <material name="arm_color">
+    <color rgba="0.6 0.8 1.0 1"/>
+  </material>
+  <material name="leg_color">
+    <color rgba="0.5 0.5 0.5 1"/>
+  </material>
+
+  <!-- Macro for defining a link with visual, collision, and inertial properties -->
+  <xacro:macro name="simple_link" params="name xyz rpy mass size color">
+    <link name="${name}">
+      <visual>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <geometry>
+          <box size="${size}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <geometry>
+          <box size="${size}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <inertia ixx="0.083" ixy="0.0" ixz="0.0" iyy="0.083" iyz="0.0" izz="0.083"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <!-- Macro for defining a cylindrical link -->
+  <xacro:macro name="cylindrical_link" params="name xyz rpy mass radius length color axis">
+    <link name="${name}">
+      <visual>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <geometry>
+          <cylinder radius="${radius}" length="${length}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <geometry>
+          <cylinder radius="${radius}" length="${length}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <inertia ixx="0.083" ixy="0.0" ixz="0.0" iyy="0.083" iyz="0.0" izz="0.083"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <!-- Macro for defining a joint -->
+  <xacro:macro name="simple_joint" params="name type parent child xyz rpy axis lower upper effort velocity">
+    <joint name="${name}" type="${type}">
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+      <axis xyz="${axis}"/>
+      <limit lower="${lower}" upper="${upper}" effort="${effort}" velocity="${velocity}"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- Torso -->
+  <cylindrical_link name="torso" xyz="0 0 0.5" rpy="0 0 0" mass="10.0" radius="0.15" length="1.0" color="white"/>
+
+  <!-- Head -->
+  <link name="head">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.15"/>
+      </geometry>
+      <material name="skin"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.15"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.015" ixy="0.0" ixz="0.0" iyy="0.015" iyz="0.0" izz="0.015"/>
+    </inertial>
+  </link>
+
+  <!-- Neck Joint -->
+  <simple_joint name="neck_joint" type="revolute" parent="torso" child="head" xyz="0 0 1.0" rpy="0 0 0" axis="0 1 0" lower="-0.5" upper="0.5" effort="50.0" velocity="1.0"/>
+
+  <!-- Left Arm -->
+  <cylindrical_link name="left_upper_arm" xyz="0 0 -0.15" rpy="1.57079632679 0 0" mass="1.0" radius="0.05" length="0.3" color="arm_color"/>
+  <cylindrical_link name="left_lower_arm" xyz="0 0 -0.15" rpy="1.57079632679 0 0" mass="0.8" radius="0.04" length="0.3" color="arm_color"/>
+
+  <!-- Left Shoulder Joint -->
+  <simple_joint name="left_shoulder_joint" type="revolute" parent="torso" child="left_upper_arm" xyz="0.25 0 0.8" rpy="0 0 0" axis="0 1 0" lower="-1.57" upper="1.57" effort="50.0" velocity="1.0"/>
+
+  <!-- Left Elbow Joint -->
+  <simple_joint name="left_elbow_joint" type="revolute" parent="left_upper_arm" child="left_lower_arm" xyz="0 0 -0.3" rpy="0 0 0" axis="0 1 0" lower="-1.57" upper="1.57" effort="30.0" velocity="1.0"/>
+
+  <!-- Right Arm (similar to left) -->
+  <cylindrical_link name="right_upper_arm" xyz="0 0 -0.15" rpy="1.57079632679 0 0" mass="1.0" radius="0.05" length="0.3" color="arm_color"/>
+  <cylindrical_link name="right_lower_arm" xyz="0 0 -0.15" rpy="1.57079632679 0 0" mass="0.8" radius="0.04" length="0.3" color="arm_color"/>
+
+  <!-- Right Shoulder Joint -->
+  <simple_joint name="right_shoulder_joint" type="revolute" parent="torso" child="right_upper_arm" xyz="-0.25 0 0.8" rpy="0 0 0" axis="0 1 0" lower="-1.57" upper="1.57" effort="50.0" velocity="1.0"/>
+
+  <!-- Right Elbow Joint -->
+  <simple_joint name="right_elbow_joint" type="revolute" parent="right_upper_arm" child="right_lower_arm" xyz="0 0 -0.3" rpy="0 0 0" axis="0 1 0" lower="-1.57" upper="1.57" effort="30.0" velocity="1.0"/>
+
+  <!-- Left Leg -->
+  <cylindrical_link name="left_upper_leg" xyz="0 0 -0.25" rpy="1.57079632679 0 0" mass="2.0" radius="0.06" length="0.5" color="leg_color"/>
+  <cylindrical_link name="left_lower_leg" xyz="0 0 -0.25" rpy="1.57079632679 0 0" mass="1.5" radius="0.05" length="0.5" color="leg_color"/>
+
+  <!-- Left Hip Joint -->
+  <simple_joint name="left_hip_joint" type="revolute" parent="torso" child="left_upper_leg" xyz="0.12 0 0" rpy="0 0 0" axis="0 1 0" lower="-1.57" upper="1.57" effort="100.0" velocity="1.0"/>
+
+  <!-- Left Knee Joint -->
+  <simple_joint name="left_knee_joint" type="revolute" parent="left_upper_leg" child="left_lower_leg" xyz="0 0 -0.5" rpy="0 0 0" axis="0 1 0" lower="0" upper="1.57" effort="80.0" velocity="1.0"/>
+
+  <!-- Right Leg -->
+  <cylindrical_link name="right_upper_leg" xyz="0 0 -0.25" rpy="1.57079632679 0 0" mass="2.0" radius="0.06" length="0.5" color="leg_color"/>
+  <cylindrical_link name="right_lower_leg" xyz="0 0 -0.25" rpy="1.57079632679 0 0" mass="1.5" radius="0.05" length="0.5" color="leg_color"/>
+
+  <!-- Right Hip Joint -->
+  <simple_joint name="right_hip_joint" type="revolute" parent="torso" child="right_upper_leg" xyz="-0.12 0 0" rpy="0 0 0" axis="0 1 0" lower="-1.57" upper="1.57" effort="100.0" velocity="1.0"/>
+
+  <!-- Right Knee Joint -->
+  <simple_joint name="right_knee_joint" type="revolute" parent="right_upper_leg" child="right_lower_leg" xyz="0 0 -0.5" rpy="0 0 0" axis="0 1 0" lower="0" upper="1.57" effort="80.0" velocity="1.0"/>
+
+</robot>
