@@ -1,0 +1,20 @@
+{
+  "title": "Physical AI & Humanoid Robotics",
+  "modules": [
+    {
+      "title": "ROS 2: The Robotic Nervous System",
+      "chapters": [
+        "What is Physical AI & ROS 2",
+        "ROS 2 Nodes",
+        "Topics & Messages"
+      ]
+    },
+    {
+      "title": "Simulation: Gazebo & Unity",
+      "chapters": [
+        "What is a Digital Twin",
+        "Gazebo Basics"
+      ]
+    }
+  ]
+}

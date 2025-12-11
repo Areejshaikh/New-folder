@@ -7,10 +7,10 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://your-book-url.github.io',
+  url: 'https://areejshaikh.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/Physical_AI_-_Humanoid_Robotics/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -81,7 +81,7 @@ const config = {
             items: [
               {
                 label: 'Book',
-                to: '/docs/category/ros2-basics',
+                to: '/docs/ros2-nervous-system',
               },
             ],
           },
@@ -115,6 +115,22 @@ const config = {
         darkTheme: require('prism-react-renderer').themes.dracula,
       },
     }),
+  
+  // Additional configuration for GitHub Pages deployment
+  trailingSlash: false,
+  plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            from: '/docs', // Redirects users from /docs/ to the first page of the ROS 2 module
+            to: '/docs/ros2-nervous-system',
+          },
+        ],
+      },
+    ],
+  ],
 };
 
 module.exports = config;

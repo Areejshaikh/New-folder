@@ -1,0 +1,454 @@
+openapi: 3.0.0
+info:
+  title: Robotics Curriculum API
+  description: API for the Robotics Curriculum Modules platform
+  version: 1.0.0
+servers:
+  - url: https://api.robotics-curriculum.example.com
+    description: Production server
+  - url: https://staging-api.robotics-curriculum.example.com
+    description: Staging server
+
+paths:
+  /modules:
+    get:
+      summary: List all curriculum modules
+      description: Retrieve a list of all available robotics curriculum modules
+      parameters:
+        - name: difficulty
+          in: query
+          description: Filter modules by difficulty level
+          required: false
+          schema:
+            type: string
+            enum: [beginner, intermediate, advanced]
+        - name: technology
+          in: query
+          description: Filter modules by technology focus
+          required: false
+          schema:
+            type: string
+            enum: [ros2, gazebo, unity, nvidia-isaac, vla]
+      responses:
+        '200':
+          description: List of curriculum modules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurriculumModule'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /modules/{moduleId}:
+    get:
+      summary: Get a specific module
+      description: Retrieve detailed information about a specific curriculum module
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          description: ID of the module to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detailed module information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurriculumModule'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users/{userId}/progress:
+    get:
+      summary: Get user progress
+      description: Retrieve the learning progress for a specific user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User progress information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProgress'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update user progress
+      description: Update the learning progress for a specific user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProgressUpdate'
+      responses:
+        '200':
+          description: Updated progress information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProgress'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /simulations/{simulationId}/execute:
+    post:
+      summary: Execute a simulation
+      description: Run a robotics simulation in a controlled environment
+      parameters:
+        - name: simulationId
+          in: path
+          required: true
+          description: ID of the simulation to execute
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimulationExecutionRequest'
+      responses:
+        '200':
+          description: Simulation execution results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimulationExecutionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /chatbot/query:
+    post:
+      summary: Query the RAG chatbot
+      description: Submit a query to the Retrieval-Augmented Generation chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatQuery'
+      responses:
+        '200':
+          description: Chatbot response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  schemas:
+    CurriculumModule:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - difficulty
+        - duration
+        - learningObjectives
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the module
+        name:
+          type: string
+          description: Name of the curriculum module
+        description:
+          type: string
+          description: Detailed description of the module
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          description: Difficulty level of the module
+        duration:
+          type: number
+          description: Estimated duration to complete the module in hours
+        learningObjectives:
+          type: array
+          items:
+            type: string
+          description: List of learning objectives for the module
+        prerequisites:
+          type: array
+          items:
+            type: string
+          description: List of prerequisite modules or knowledge
+        technologyStack:
+          type: array
+          items:
+            type: string
+          description: Technologies covered in the module
+        contentUrl:
+          type: string
+          description: URL to the module content
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModuleAsset'
+
+    ModuleAsset:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - url
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the asset
+        name:
+          type: string
+          description: Name of the asset
+        type:
+          type: string
+          enum: [simulation, code-example, documentation, video, dataset]
+          description: Type of asset
+        url:
+          type: string
+          description: URL to access the asset
+        size:
+          type: number
+          description: Size of the asset in bytes
+
+    UserProgress:
+      type: object
+      required:
+        - userId
+        - modulesCompleted
+        - currentModule
+      properties:
+        userId:
+          type: string
+          description: Unique identifier for the user
+        modulesCompleted:
+          type: array
+          items:
+            type: string
+          description: List of completed module IDs
+        currentModule:
+          type: string
+          description: ID of the currently active module
+        progressPercent:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Overall progress percentage
+        achievements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achievement'
+        assessmentScores:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssessmentScore'
+
+    UserProgressUpdate:
+      type: object
+      required:
+        - action
+        - moduleId
+      properties:
+        action:
+          type: string
+          enum: [start, progress, complete, review]
+          description: Action to update progress
+        moduleId:
+          type: string
+          description: ID of the module being updated
+        progressPercent:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Progress percentage for the module
+        assessmentScore:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Score on module assessment
+
+    Achievement:
+      type: object
+      required:
+        - id
+        - name
+        - description
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the achievement
+        name:
+          type: string
+          description: Name of the achievement
+        description:
+          type: string
+          description: Description of the achievement
+        dateEarned:
+          type: string
+          format: date-time
+          description: Date and time when achievement was earned
+
+    AssessmentScore:
+      type: object
+      required:
+        - moduleId
+        - score
+        - dateTaken
+      properties:
+        moduleId:
+          type: string
+          description: ID of the module for which assessment was taken
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Score received on the assessment
+        dateTaken:
+          type: string
+          format: date-time
+          description: Date and time when assessment was taken
+
+    SimulationExecutionRequest:
+      type: object
+      required:
+        - parameters
+        - scenario
+      properties:
+        parameters:
+          type: object
+          description: Configuration parameters for the simulation
+        scenario:
+          type: string
+          description: Specific scenario to run within the simulation
+        duration:
+          type: number
+          description: Duration to run the simulation (in seconds)
+
+    SimulationExecutionResponse:
+      type: object
+      required:
+        - status
+        - results
+      properties:
+        status:
+          type: string
+          enum: [success, error, timeout]
+          description: Execution status
+        results:
+          type: object
+          description: Results from the simulation execution
+        logs:
+          type: array
+          items:
+            type: string
+          description: Execution logs
+        metrics:
+          type: object
+          description: Performance metrics from the simulation
+
+    ChatQuery:
+      type: object
+      required:
+        - query
+        - context
+      properties:
+        query:
+          type: string
+          description: The question or query from the user
+        context:
+          type: string
+          description: Relevant context for the query
+        userId:
+          type: string
+          description: Optional user ID for personalization
+
+    ChatResponse:
+      type: object
+      required:
+        - response
+        - sources
+      properties:
+        response:
+          type: string
+          description: The chatbot's response to the query
+        sources:
+          type: array
+          items:
+            type: string
+          description: Sources referenced in the response
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence level of the response
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters or payload
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error message
+              code:
+                type: string
+                description: Error code
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error message
+              code:
+                type: string
+                description: Error code
+
+  parameters:
+    moduleId:
+      name: moduleId
+      in: path
+      required: true
+      description: ID of the module
+      schema:
+        type: string
+
+security:
+  - bearerAuth: []
+  
+securityDefinitions:
+  bearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT

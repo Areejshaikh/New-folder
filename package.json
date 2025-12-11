@@ -1,0 +1,22 @@
+{
+  "name": "physical-ai-humanoid-robotics-book-project",
+  "version": "1.0.0",
+  "description": "A project for generating the Physical AI & Humanoid Robotics book using Docusaurus",
+  "main": "index.js",
+  "scripts": {
+    "generate-book": "node scripts/generate-book.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "docusaurus",
+    "book",
+    "ai",
+    "robotics"
+  ],
+  "author": "Spec-Kit Plus User",
+  "license": "MIT",
+  "dependencies": {
+    "google-auth-library": "^9.0.0",
+    "node-fetch": "^2.6.7"
+  }
+}

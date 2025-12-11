@@ -17,13 +17,17 @@ const sidebars = {
     'index', // Home page
     {
       type: 'category',
-      label: 'ROS 2 Basics',
+      label: 'ROS 2: The Robotic Nervous System',
       collapsible: true,
       collapsed: false,
       items: [
-        'ros2-basics/introduction-to-ros2-middleware',
-        'ros2-basics/python-agents-ros2-integration',
-        'ros2-basics/humanoid-robot-modeling-urdf',
+        'ros2-nervous-system',
+        'ros2-nodes',
+        'ros2-topics-messages',
+        'interactive-ros2-content',
+        'turtlesim-exercises',
+        'assessment-quiz',
+        'curriculum-rag-integration',
       ],
     },
   ],
