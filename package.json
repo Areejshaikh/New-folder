@@ -1,22 +1,59 @@
 {
-  "name": "physical-ai-humanoid-robotics-book-project",
+  "name": "ai-driven-book-rag",
   "version": "1.0.0",
-  "description": "A project for generating the Physical AI & Humanoid Robotics book using Docusaurus",
+  "description": "AI-Driven Book with Integrated RAG Chatbot",
   "main": "index.js",
-  "scripts": {
-    "generate-book": "node scripts/generate-book.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "directories": {
+    "doc": "docs"
   },
-  "keywords": [
-    "docusaurus",
-    "book",
-    "ai",
-    "robotics"
-  ],
-  "author": "Spec-Kit Plus User",
-  "license": "MIT",
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "typecheck": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
   "dependencies": {
-    "google-auth-library": "^9.0.0",
-    "node-fetch": "^2.6.7"
+    "@docusaurus/core": "3.1.0",
+    "@docusaurus/preset-classic": "3.1.0",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.1.0",
+    "@docusaurus/tsconfig": "3.1.0",
+    "@docusaurus/types": "3.1.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "jsdom": "^21.1.1",
+    "typescript": "~5.2.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0"
   }
 }

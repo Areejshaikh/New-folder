@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Docusaurus book service
+  docusaurus:
+    build: ./docusaurus-book
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./docusaurus-book:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+
+  # RAG chatbot service
+  rag-chatbot:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ENVIRONMENT=development
+    depends_on:
+      - vector-db
+
+  # Vector database for RAG (using pgvector)
+  vector-db:
+    image: ankane/pgvector:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=rag_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Simulation service (placeholder)
+  simulation-api:
+    build: .
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+
+volumes:
+  postgres_data:

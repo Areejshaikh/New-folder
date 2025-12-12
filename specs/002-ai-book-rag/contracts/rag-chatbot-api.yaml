@@ -1,0 +1,353 @@
+openapi: 3.0.1
+info:
+  title: RAG Chatbot API
+  description: API for the RAG (Retrieval Augmented Generation) chatbot system integrated with the book content
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: http://localhost:8000/v1
+    description: Development server
+
+paths:
+  /chat:
+    post:
+      summary: Submit a query to the RAG chatbot
+      description: Process a user query against the book content and return a contextual response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Successful response from the chatbot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Bad request due to invalid input
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+
+  /chat/history:
+    get:
+      summary: Retrieve chat history for a session
+      description: Get the conversation history for a specific session
+      parameters:
+        - name: session_id
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Unique identifier for the chat session
+      responses:
+        '200':
+          description: List of chat messages in the session
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessage'
+        '404':
+          description: Session not found
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+
+  /content/search:
+    post:
+      summary: Search book content
+      description: Search the book content for relevant passages to a query
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentSearchRequest'
+      responses:
+        '200':
+          description: List of relevant content passages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContentPassage'
+        '400':
+          description: Bad request due to invalid input
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+
+  /content/{contentId}:
+    get:
+      summary: Retrieve specific content
+      description: Get the full details of a specific book content item
+      parameters:
+        - name: contentId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Unique identifier for the content
+      responses:
+        '200':
+          description: Content item details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookContent'
+        '404':
+          description: Content not found
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - query
+        - session_id
+      properties:
+        query:
+          type: string
+          description: The user's query text
+          example: "Explain the concept of forward kinematics"
+        session_id:
+          type: string
+          description: Unique identifier for the chat session
+          example: "sess_1234567890"
+        selected_text:
+          type: string
+          description: Optional text that was selected on the page when the query was made
+          example: "Forward kinematics is the process of determining the position and orientation of the end-effector based on the joint angles."
+        context_page:
+          type: string
+          description: Optional page/section where the query originated
+          example: "/chapters/kinematics/forward-kinematics"
+
+    ChatResponse:
+      type: object
+      required:
+        - id
+        - response
+        - query_id
+        - timestamp
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this response
+          example: "resp_1234567890"
+        query_id:
+          type: string
+          description: Identifier of the corresponding query
+          example: "query_0987654321"
+        response:
+          type: string
+          description: The chatbot's response to the query
+          example: "Forward kinematics is the process of calculating the position and orientation of a robot's end-effector based on the known joint angles."
+        citations:
+          type: array
+          description: List of citations to book content that support the response
+          items:
+            $ref: '#/components/schemas/Citation'
+        follow_up_questions:
+          type: array
+          description: Suggested follow-up questions
+          items:
+            type: string
+          example:
+            - "What is inverse kinematics?"
+            - "How is forward kinematics used in robotics?"
+        timestamp:
+          type: string
+          format: date-time
+          description: When the response was generated
+
+    ChatMessage:
+      type: object
+      required:
+        - id
+        - type
+        - content
+        - timestamp
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this message
+          example: "msg_1234567890"
+        type:
+          type: string
+          enum: [user, assistant]
+          description: Type of message
+        content:
+          type: string
+          description: The content of the message
+        citations:
+          type: array
+          description: Citations associated with the message (for assistant responses)
+          items:
+            $ref: '#/components/schemas/Citation'
+        timestamp:
+          type: string
+          format: date-time
+          description: When the message was created
+
+    ContentSearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: The search query
+          example: "forward kinematics robotics"
+        limit:
+          type: integer
+          description: Maximum number of results to return
+          default: 5
+        filters:
+          type: object
+          description: Additional filters for the search
+          properties:
+            content_type:
+              type: array
+              items:
+                type: string
+              description: Filter by content type (chapter, lesson, etc.)
+
+    ContentPassage:
+      type: object
+      required:
+        - id
+        - title
+        - content
+        - relevance_score
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the content passage
+          example: "content_1234567890"
+        title:
+          type: string
+          description: Title of the content passage
+          example: "Forward Kinematics Explained"
+        content:
+          type: string
+          description: The text content of the passage
+          example: "Forward kinematics is the process of determining the position and orientation of the end-effector based on the joint angles."
+        relevance_score:
+          type: number
+          description: How relevant this passage is to the query (0-1)
+          example: 0.85
+        url:
+          type: string
+          description: URL to the full content
+          example: "/chapters/kinematics/forward-kinematics"
+
+    BookContent:
+      type: object
+      required:
+        - id
+        - title
+        - content
+        - type
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the content
+          example: "content_1234567890"
+        title:
+          type: string
+          description: Title of the content
+          example: "Chapter 5: Forward Kinematics"
+        description:
+          type: string
+          description: Brief description of the content
+          example: "An introduction to forward kinematics in robotics"
+        content:
+          type: string
+          description: The actual content in markdown format
+          example: "# Forward Kinematics\n\nForward kinematics is the process of determining the position..."
+        type:
+          type: string
+          description: Type of content (e.g., chapter, module, lesson)
+          example: "chapter"
+        keywords:
+          type: array
+          items:
+            type: string
+          description: Keywords associated with the content
+          example: ["kinematics", "robotics", "forward"]
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for categorization
+          example: ["robotics", "kinematics", "theoretical"]
+        created_at:
+          type: string
+          format: date-time
+          description: When the content was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the content was last updated
+        parent_id:
+          type: string
+          description: ID of parent content (if applicable)
+        order:
+          type: integer
+          description: Order position in the hierarchy
+        version:
+          type: string
+          description: Content version
+
+    Citation:
+      type: object
+      required:
+        - content_id
+        - title
+        - url
+      properties:
+        content_id:
+          type: string
+          description: ID of the referenced content
+          example: "content_1234567890"
+        title:
+          type: string
+          description: Title of the referenced content
+          example: "Forward Kinematics Explained"
+        url:
+          type: string
+          description: URL to the referenced content
+          example: "/chapters/kinematics/forward-kinematics"
+        text:
+          type: string
+          description: Excerpt from the referenced content
+          example: "Forward kinematics is the process of determining the position and orientation of the end-effector..."
+
+tags:
+  - name: chat
+    description: Chatbot interaction endpoints
+  - name: content
+    description: Book content management and search

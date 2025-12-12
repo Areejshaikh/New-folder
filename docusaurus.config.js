@@ -1,0 +1,1 @@
+// Docusaurus configuration will be created during Phase 2
